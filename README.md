@@ -1,7 +1,7 @@
-# 🧙 Text-Based Adventure Game
+# 🏡 HOA Showdown
 
-Welcome to the **AI-Generated Adventure Game**!  
-This is a simple text-based roleplaying game inspired by classics like *Zork* and *Colossal Cave Adventure*. Players choose a character class, explore different locations, and engage in turn-based combat against enemies.
+Welcome to the **HOA Showdown**!  
+This is a satirical text-based roleplaying game where players take on the HOA in epic battles of arguments, persuasion, and neighborhood politics. Inspired by classic text adventures, you’ll choose a character class, explore different HOA-controlled locations, and engage in turn-based combat against nosy neighbors and board members.
 
 ---
 
@@ -9,26 +9,26 @@ This is a simple text-based roleplaying game inspired by classics like *Zork* an
 
 - **Character Creation**  
   Choose from three classes:
-  - **Warrior**: Strong melee fighter  
-  - **Mage**: Powerful spellcaster  
-  - **Rogue**: Agile and cunning  
+  - **Homeowner**: Balanced fighter with strong arguments  
+  - **Lawyer**: Master of persuasion and legal loopholes  
+  - **Rebel**: Agile and cunning, thrives on bending the rules  
 
 - **Stats System**  
   Each class has unique attributes:  
   - Strength  
   - Agility  
-  - Magic  
+  - Persuasion  
 
 - **World Navigation**  
-  Explore different areas:
-  - Haunted Forest 🌲  
-  - Enchanted Castle 🏰  
+  Explore different HOA battlegrounds:
+  - Neighborhood Watch 👀  
+  - HOA Board Meeting 📋  
 
 - **Combat System**  
   Turn-based battles with options to:
-  - Attack  
+  - Argue  
   - Defend  
-  - Use Magic  
+  - Use Persuasion  
 
 - **Error Handling**  
   Invalid commands are caught gracefully with helpful messages.
@@ -38,6 +38,7 @@ This is a simple text-based roleplaying game inspired by classics like *Zork* an
 ## ⚙️ Requirements
 
 - Python 3.7 or higher  
+- Works on Windows, macOS, or Linux  
 - No external libraries required (uses only Python’s built-in `random` module)
 
 ---
@@ -45,8 +46,8 @@ This is a simple text-based roleplaying game inspired by classics like *Zork* an
 ## 🚀 How to Run
 
 1. Clone or download this repository.  
-2. Save the game code into a file named `adventure.py`.  
+2. Save the game code into a file named `hoa_showdown.py`.  
 3. Open a terminal and run:
 
 ```bash
-python adventure.py
+python hoa_showdown.py
