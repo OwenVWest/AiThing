@@ -1,8 +1,6 @@
-import random  # Import the random module to generate unpredictable outcomes in combat
+import random
 
 # --- Character Classes ---
-# Define available character classes with their base stats.
-# Each class has Strength, Agility, and Persuasion attributes that affect gameplay.
 classes = {
     "Homeowner": {"Strength": 7, "Agility": 5, "Persuasion": 3},
     "Lawyer": {"Strength": 3, "Agility": 4, "Persuasion": 9},
@@ -11,14 +9,8 @@ classes = {
 
 # --- Character Creation ---
 def create_character():
-    """
-    Allows the player to choose a character class.
-    If the input is valid, assigns the chosen class and stats.
-    If invalid, defaults to Homeowner.
-    Returns a dictionary representing the player with class, stats, HP, and inventory.
-    """
     print("Choose your class: Homeowner, Lawyer, Rebel")
-    choice = input("> ").capitalize()  # Normalize input to match class names
+    choice = input("> ").capitalize()
     if choice in classes:
         stats = classes[choice].copy()
         print(f"You are a {choice} with stats: {stats}")
@@ -27,36 +19,44 @@ def create_character():
         print("Invalid choice, defaulting to Homeowner.")
         return {"Class": "Homeowner", "Stats": classes["Homeowner"].copy(), "HP": 20, "Inventory": []}
 
-# --- World Navigation ---
-def hoa_board_meeting(player):
-    """
-    Represents the HOA Board Meeting location.
-    Introduces an enemy encounter with the HOA President.
-    """
-    print("\n📋 You enter the HOA Board Meeting. The HOA President glares at you!")
-    combat(player, {"Name": "HOA President", "HP": 12, "Strength": 5})
+# --- Inventory System ---
+def add_item(player, item):
+    player["Inventory"].append(item)
+    print(f"🎒 You obtained: {item}")
 
-def neighborhood_watch(player):
-    """
-    Represents the Neighborhood Watch location.
-    Introduces an enemy encounter with a Nosy Neighbor.
-    """
-    print("\n👀 You walk into the Neighborhood Watch gathering. A Nosy Neighbor confronts you!")
-    combat(player, {"Name": "Nosy Neighbor", "HP": 10, "Strength": 4})
+def use_item(player):
+    if not player["Inventory"]:
+        print("Your inventory is empty!")
+        return False
+    print("Choose an item to use:")
+    for i, item in enumerate(player["Inventory"], 1):
+        print(f"{i}. {item}")
+    choice = input("> ")
+    if choice.isdigit() and 1 <= int(choice) <= len(player["Inventory"]):
+        item = player["Inventory"].pop(int(choice) - 1)
+        print(f"You used {item}!")
+        # Item effects
+        if item == "Secret BBQ Sauce":
+            boost = random.randint(2, 5)
+            print(f"🔥 Persuasion boosted by {boost} for this turn!")
+            return ("Persuasion", boost)
+        elif item == "Legal Brief":
+            print("📚 You defend flawlessly, negating enemy damage this turn!")
+            return ("Defend", None)
+        elif item == "Sprinkler Malfunction":
+            boost = random.randint(2, 5)
+            print(f"💦 Agility boosted by {boost} for this turn!")
+            return ("Agility", boost)
+    else:
+        print("Invalid choice.")
+    return False
 
 # --- Combat System ---
 def combat(player, enemy):
-    """
-    Handles turn-based combat between the player and an enemy.
-    Player can choose to Argue, Defend, or Use Persuasion.
-    Enemy attacks automatically if still alive.
-    Combat continues until either the player or enemy HP reaches zero.
-    """
     print(f"A {enemy['Name']} challenges you!")
     while player["HP"] > 0 and enemy["HP"] > 0:
-        # Display current health values
         print(f"\nYour HP: {player['HP']} | Enemy HP: {enemy['HP']}")
-        print("Choose: Argue / Defend / Use Persuasion")
+        print("Choose: Argue / Defend / Use Persuasion / Use Item")
         action = input("> ").lower()
 
         # Player actions
@@ -71,40 +71,65 @@ def combat(player, enemy):
             dmg = random.randint(1, player["Stats"]["Persuasion"])
             enemy["HP"] -= dmg
             print(f"You make a convincing point, dealing {dmg} damage!")
+        elif action == "use item":
+            effect = use_item(player)
+            if effect:
+                if effect[0] == "Persuasion":
+                    dmg = random.randint(1, player["Stats"]["Persuasion"] + effect[1])
+                    enemy["HP"] -= dmg
+                    print(f"Boosted persuasion deals {dmg} damage!")
+                elif effect[0] == "Agility":
+                    dmg = random.randint(1, player["Stats"]["Agility"] + effect[1])
+                    enemy["HP"] -= dmg
+                    print(f"Boosted agility deals {dmg} damage!")
+                elif effect[0] == "Defend":
+                    print("You avoided damage this turn!")
+                    continue
         else:
             print("That’s not a valid command.")
 
-        # Enemy counterattack if still alive
+        # Enemy counterattack
         if enemy["HP"] > 0:
             dmg = random.randint(1, enemy["Strength"])
             player["HP"] -= dmg
             print(f"The {enemy['Name']} hits you with HOA rules for {dmg} damage!")
 
-    # Outcome of combat
     if player["HP"] <= 0:
         print("💀 You have been defeated by the HOA...")
+        return False
     else:
-        print(f"🎉 You defeated the {enemy['Name']}! The neighborhood breathes easier.")
+        print(f"🎉 You defeated the {enemy['Name']}!")
+        return True
+
+# --- Story Stages ---
+def stage_one(player):
+    print("\n👀 Stage 1: The Nosy Neighbor confronts you at the Neighborhood Watch!")
+    if combat(player, {"Name": "Nosy Neighbor", "HP": 10, "Strength": 4}):
+        add_item(player, "Secret BBQ Sauce")
+        stage_two(player)
+
+def stage_two(player):
+    print("\n📋 Stage 2: The HOA President blocks your path at the Board Meeting!")
+    if combat(player, {"Name": "HOA President", "HP": 12, "Strength": 5}):
+        add_item(player, "Legal Brief")
+        stage_three(player)
+
+def stage_three(player):
+    print("\n💰 Stage 3: The HOA Treasurer attacks with spreadsheets of doom!")
+    if combat(player, {"Name": "HOA Treasurer", "HP": 14, "Strength": 6}):
+        add_item(player, "Sprinkler Malfunction")
+        final_stage(player)
+
+def final_stage(player):
+    print("\n🏠 Final Stage: The HOA Council gathers for the ultimate showdown!")
+    if combat(player, {"Name": "HOA Council", "HP": 18, "Strength": 7}):
+        print("\n🎉 Victory! You defeated the entire HOA and liberated the neighborhood!")
 
 # --- Main Game Loop ---
 def main():
-    """
-    Entry point of the game.
-    Handles character creation and initial world navigation choice.
-    """
     print("Welcome to the HOA Showdown!")
     player = create_character()
+    stage_one(player)
 
-    # Prompt player to choose a location
-    print("\nWhere will you go? HOA Board Meeting or Neighborhood Watch?")
-    choice = input("> ").lower()
-    if "meeting" in choice:
-        hoa_board_meeting(player)
-    elif "watch" in choice:
-        neighborhood_watch(player)
-    else:
-        print("You wander aimlessly, and the HOA fines you for loitering. The adventure ends.")
-
-# Run the game if executed directly
 if __name__ == "__main__":
     main()
