@@ -45,7 +45,7 @@ def use_item(player):
             return ("Defend", None)
         elif item == "Sprinkler Malfunction":
             boost = random.randint(2, 5)
-            print(f"💦 Agility boosted by {boost} for this turn!")
+            print(f" Agility boosted by {boost} for this turn!")
             return ("Agility", boost)
     else:
         print("Invalid choice.")
